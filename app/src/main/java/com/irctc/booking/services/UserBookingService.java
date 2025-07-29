@@ -2,6 +2,7 @@ package com.irctc.booking.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.irctc.booking.entities.User;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.irctc.booking.util.UserServiceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,11 @@ public class UserBookingService {
         }catch (IOException ex){
             return Boolean.FALSE;
         }
+    }
+
+    private void saveUserListToFile() throws IOException{
+        File userFile = new File(USER_PATH);
+        objectMapper.writeValue(userFile,userList);
     }
 
 

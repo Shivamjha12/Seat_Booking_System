@@ -1,0 +1,34 @@
+[
+  {
+    "user_id":"12345",
+    "name": "Shivam Kumar Jha",
+    "password": "abcd12345",
+    "city": "Delhi",
+    "age": 23,
+    "hashedPassword": "abcd1234",
+    "tickets_booked": [
+      {
+        "ticket_id": "123",
+        "source": "Delhi",
+        "destination": "Banglore",
+        "date_of_travel": "2023-12-08T18:30:00Z",
+        "train": {
+          "train_id": "bacs",
+          "train_no": 12345,
+          "seats":[
+            [0,0,0,0,0,0],
+            [0,0,0,0,0,0],
+            [0,0,0,0,0,0],
+            [0,0,0,0,0,0]
+          ],
+          "stations": {
+            "Banglore":"03:17:00",
+            "Jaipur": "05:17:00",
+            "Delhi": "07:17:00"
+          }
+        }
+      }
+    ]
+  }
+
+]

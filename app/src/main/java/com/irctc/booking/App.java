@@ -3,12 +3,82 @@
  */
 package com.irctc.booking;
 
+import com.irctc.booking.entities.User;
+import com.irctc.booking.services.UserBookingService;
+import com.irctc.booking.util.UserServiceUtil;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.UUID;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        System.out.println("Running Train Booking System");
+        Scanner sc =  new Scanner(System.in);
+        int option = 0;
+        UserBookingService userBookingServiceObj;
+
+        try{
+            userBookingServiceObj = new UserBookingService();
+
+        }catch (IOException ex){
+            System.out.println("Something Went Wrong");
+            return;
+        }
+
+        while(option!=7){
+            System.out.println("Choose Options: ");
+            System.out.println("Enter 1. for sign up");
+            System.out.println("Enter 2. for Login");
+            System.out.println("Enter 3. for Fetch Bookings");
+            System.out.println("Enter 4. for search trains");
+            System.out.println("Enter 5 to book a seat");
+            System.out.println("Enter 6 for cancel my bookings");
+            System.out.println("Enter 7 to Exit from the application");
+
+            option = sc.nextInt();
+
+            switch(option){
+                case 1:
+                    System.out.println("Enter Name: ");
+                    String nameToSignup = sc.next();
+                    System.out.println("Enter Email: ");
+                    String emailToSignUp = sc.next().toLowerCase();
+                    System.out.println("Enter the city: ");
+                    String cityToSignUp = sc.next();
+                    System.out.println("Enter Age: ");
+                    Integer ageToSignUp = sc.nextInt();
+                    System.out.println("Enter Password to Signup");
+                    String passwordToSignup=sc.next();
+                    User userToSignup = new User(nameToSignup,emailToSignUp, UUID.randomUUID().toString(),ageToSignUp,cityToSignUp,passwordToSignup, UserServiceUtil.hashPassword(passwordToSignup),new ArrayList<>());
+                    userBookingServiceObj.signUp(userToSignup);
+                    break;
+                case 2:
+                    System.out.println("Enter Your Email");
+                    String emailToLogin = sc.next();
+                    System.out.println("Enter Password: ");
+                    String passwordToLogin = sc.next();
+                    Optional<User> loginUser = userBookingServiceObj.returnUserByEmailPassword(emailToLogin,passwordToLogin);
+                    if(loginUser.isPresent()){
+                        System.out.printf("Welcome %s from %s%n",loginUser.get().getName(),loginUser.get().getCity());
+
+                    }else{
+                        System.out.println("User Not Present in Db");
+                        System.out.println("Please Look for Email and Password");
+                    }
+
+
+
+            }
+
+
+
+
+
+        }
     }
 }

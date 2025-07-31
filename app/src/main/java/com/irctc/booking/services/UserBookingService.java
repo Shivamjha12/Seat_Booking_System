@@ -18,11 +18,20 @@ public class UserBookingService {
 
     private static final String USER_PATH="app/src/main/java/com/irctc/booking/localDb/users.json";
 
+    public List<User> loadUsers() throws  IOException{
+        File users = new File(USER_PATH);
+        return userList = objectMapper.readValue(users, new TypeReference<List<User>>(){});
+
+    }
+    public UserBookingService() throws IOException{
+        loadUsers();
+    }
+
+
 
     public UserBookingService(User userPassed ) throws IOException {
     this.user = userPassed;
-    File users = new File(USER_PATH);
-    userList = objectMapper.readValue(users, new TypeReference<List<User>>(){});
+    loadUsers();
 
 
     }
@@ -47,6 +56,33 @@ public class UserBookingService {
     private void saveUserListToFile() throws IOException{
         File userFile = new File(USER_PATH);
         objectMapper.writeValue(userFile,userList);
+    }
+
+    public void fetchBooking(){
+        user.printTickets();
+
+    }
+
+    public Optional<User> returnUserByEmailPassword(String emailToFind,String passwordToFind){
+        Optional<User> currentUser = userList.stream().filter(
+                user ->user.getEmail().equalsIgnoreCase(emailToFind)
+                &&
+                        user.getPassword().equals(passwordToFind)
+                )
+                .findFirst();
+        return currentUser;
+    }
+
+    public Boolean isUserPresentInDb(String emailToFind){
+        for(User user : userList){
+            if(user.getEmail().equalsIgnoreCase(emailToFind)  ){
+                return true;
+            }
+        }
+        return  false;
+    }
+    public boolean cancelBooking(String ticketId){
+        return Boolean.FALSE;
     }
 
 

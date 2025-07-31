@@ -1,9 +1,13 @@
 package com.irctc.booking.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.sql.Time;
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Train {
     private String trainId;
     private String trainNumber;
@@ -61,7 +65,7 @@ public class Train {
     public void setStation(List<String> station) {
         this.station = station;
     }
-
+    @JsonIgnore
     public String getTrainInfo(){
         return String.format("Train ID: %s Train No: %s",trainId,trainNumber);
     }

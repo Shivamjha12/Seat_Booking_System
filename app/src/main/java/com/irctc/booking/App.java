@@ -44,24 +44,26 @@ public class App {
 
             switch(option){
                 case 1:
+                    sc.nextLine();
                     System.out.println("Enter Name: ");
-                    String nameToSignup = sc.next();
+                    String nameToSignup = sc.nextLine();
                     System.out.println("Enter Email: ");
-                    String emailToSignUp = sc.next().toLowerCase();
+                    String emailToSignUp = sc.nextLine();
                     System.out.println("Enter the city: ");
-                    String cityToSignUp = sc.next();
+                    String cityToSignUp = sc.nextLine();
                     System.out.println("Enter Age: ");
-                    Integer ageToSignUp = sc.nextInt();
+                    Integer ageToSignUp = Integer.parseInt(sc.nextLine());
                     System.out.println("Enter Password to Signup");
-                    String passwordToSignup=sc.next();
-                    User userToSignup = new User(nameToSignup,emailToSignUp, UUID.randomUUID().toString(),ageToSignUp,cityToSignUp,passwordToSignup, UserServiceUtil.hashPassword(passwordToSignup),new ArrayList<>());
+                    String passwordToSignup= sc.nextLine();
+                    User userToSignup = new User(nameToSignup,emailToSignUp.toLowerCase(), UUID.randomUUID().toString(),ageToSignUp,cityToSignUp,passwordToSignup, UserServiceUtil.hashPassword(passwordToSignup),new ArrayList<>());
                     userBookingServiceObj.signUp(userToSignup);
                     break;
                 case 2:
+                    sc.nextLine();
                     System.out.println("Enter Your Email");
-                    String emailToLogin = sc.next();
+                    String emailToLogin = sc.nextLine();
                     System.out.println("Enter Password: ");
-                    String passwordToLogin = sc.next();
+                    String passwordToLogin = sc.nextLine();
                     Optional<User> loginUser = userBookingServiceObj.returnUserByEmailPassword(emailToLogin,passwordToLogin);
                     if(loginUser.isPresent()){
                         System.out.printf("Welcome %s from %s%n",loginUser.get().getName(),loginUser.get().getCity());

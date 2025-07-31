@@ -26,7 +26,7 @@ public class App {
             userBookingServiceObj = new UserBookingService();
 
         }catch (IOException ex){
-            System.out.println("Something Went Wrong");
+            System.out.println("Something Went Wrong: IOException Occured In COde");
             return;
         }
 

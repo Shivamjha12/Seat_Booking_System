@@ -78,11 +78,11 @@ public class User {
         this.userId = userId;
     }
 
-    public List<Ticket> getTicketBooked() {
+    public List<Ticket> getTicketsBooked() {
         return ticketsBooked;
     }
 
-    public void setTicketBooked(List<Ticket> ticketBooked) {
+    public void setTicketsBooked(List<Ticket> ticketBooked) {
         this.ticketsBooked = ticketBooked;
     }
 

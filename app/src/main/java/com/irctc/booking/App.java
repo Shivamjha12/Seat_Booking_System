@@ -3,15 +3,15 @@
  */
 package com.irctc.booking;
 
+import com.irctc.booking.entities.Ticket;
+import com.irctc.booking.entities.Train;
 import com.irctc.booking.entities.User;
+import com.irctc.booking.services.TrainService;
 import com.irctc.booking.services.UserBookingService;
 import com.irctc.booking.util.UserServiceUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 public class App {
 
@@ -21,7 +21,7 @@ public class App {
         Scanner sc =  new Scanner(System.in);
         int option = 0;
         UserBookingService userBookingServiceObj;
-
+        TrainService trainServiceObj;
         try{
             userBookingServiceObj = new UserBookingService();
 
@@ -29,6 +29,14 @@ public class App {
             System.out.println("Something Went Wrong: IOException Occured In COde");
             return;
         }
+
+        try{
+            trainServiceObj = new TrainService();
+        } catch (IOException ex){
+            System.out.println("Getting IO Error while Fetching Train List from json file");
+            return;
+        }
+
 
         while(option!=7){
             System.out.println("Choose Options: ");
@@ -66,12 +74,55 @@ public class App {
                     String passwordToLogin = sc.nextLine();
                     Optional<User> loginUser = userBookingServiceObj.returnUserByEmailPassword(emailToLogin,passwordToLogin);
                     if(loginUser.isPresent()){
+
                         System.out.printf("Welcome %s from %s%n",loginUser.get().getName(),loginUser.get().getCity());
+
 
                     }else{
                         System.out.println("User Not Present in Db");
                         System.out.println("Please Look for Email and Password");
                     }
+                    break;
+                case 3:
+                    Optional<User> currentUser = userBookingServiceObj.getUser();
+                    if(currentUser.isPresent()){
+//                        System.out.println("User Is Present in Case 3");
+                        Optional<List<Ticket>> userTickets = userBookingServiceObj.getCurrentUserTickets();
+                        if(userTickets.isPresent()){
+//                            System.out.println("Tickets List Is Fetched in Case 3");
+                            if(userTickets.get().isEmpty()){
+                                System.out.printf("Hello %s You doesn't book any Ticket Yet \n",currentUser.get().getName());
+                            }
+                            else{userTickets.ifPresent(tickets -> {
+                                tickets.forEach(Ticket -> {
+                                    Ticket.getTicketInfo();
+                                    System.out.println("Inside Tickets List Loop in Case 3");
+
+                                });
+                            });
+                                }
+//                            System.out.println("User Is Present in Case 3 Last Line inside if function");
+                        }else{
+                            System.out.printf("Hello %s we not able to find any tickets booked by you ", currentUser.get().getName());
+                        }
+                    }else{
+                        System.out.println("Please Login On System, We don't able to find your tickets");
+                    }
+//                    System.out.println("Last Line of Case 3");
+
+                case 4:
+                    Optional<List<Train>> trainList = trainServiceObj.getTrainList();
+                    if(trainList.isPresent()){
+                        trainList.ifPresent(trains ->
+                                trains.forEach(train->{
+                                    System.out.println(train.getTrainInfo());
+                                })
+                                );
+                    }else{
+                        System.out.println("Currently There is No Available, Please try After some time");
+                    }
+
+
 
 
 

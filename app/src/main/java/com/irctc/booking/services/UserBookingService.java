@@ -1,5 +1,6 @@
 package com.irctc.booking.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.irctc.booking.entities.Ticket;
 import com.irctc.booking.entities.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.irctc.booking.util.UserServiceUtil;
@@ -57,7 +58,10 @@ public class UserBookingService {
 //        System.out.println("Getting Error Here----- Line 2 UserBookingService() function");
     }
 
-
+    public Optional<List<Ticket>> getCurrentUserTickets(){
+        List<Ticket> currentUserTickets = user.getTicketsBooked();
+        return Optional.ofNullable(currentUserTickets);
+    }
 
     public UserBookingService(User userPassed ) throws IOException {
     this.user = userPassed;
@@ -100,7 +104,11 @@ public class UserBookingService {
                         user.getPassword().equals(passwordToFind)
                 )
                 .findFirst();
+        currentUser.ifPresent(value -> user = value);
         return currentUser;
+    }
+    public Optional<User> getUser(){
+        return Optional.ofNullable(user);
     }
 
     public Boolean isUserPresentInDb(String emailToFind){

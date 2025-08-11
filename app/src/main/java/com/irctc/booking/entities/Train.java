@@ -90,7 +90,46 @@ public class Train {
     }
 
     @JsonIgnore
+    public Boolean bookSeat(){
+        boolean flagTicketBooked=false;
+        if(canBookSeat()) {
+            for (int i = 0; i < seats.size(); i++) {
+                for (int j = 0; j < seats.get(i).size(); j++) {
+                    if (seats.get(i).get(j) == 0) {
+                        seats.get(i).set(j,1);
+                        flagTicketBooked=true;
+                        break;
+                    }
+                }
+                if(flagTicketBooked){break;}
+            }
+        }else{
+            return false;
+        }
+        return true;
+    }
+    @JsonIgnore
+    public Boolean canBookSeat(){
+        return getCurrentSeatCapacity() >= 1;
+    }
+
+    @JsonIgnore
     public String getTrainInfo() {
         return String.format("Train ID: %s Train No: %s with Capacity: %d out of %d", trainId, trainNumber,getCurrentSeatCapacity(),seats.get(0).size()*seats.size());
+    }
+    @JsonIgnore
+    public String getDestionation(){
+        if(station.size()>1){
+            return station.get(station.size() - 1);
+        }
+        return " ";
+    }
+
+    @JsonIgnore
+    public String getSource(){
+        if(station.size()>1){
+            return station.get(0);
+        }
+        return " ";
     }
 }

@@ -75,7 +75,7 @@ public class App {
                     Optional<User> loginUser = userBookingServiceObj.returnUserByEmailPassword(emailToLogin,passwordToLogin);
                     if(loginUser.isPresent()){
 
-                        System.out.printf("Welcome %s from %s%n",loginUser.get().getName(),loginUser.get().getCity());
+                        System.out.printf("Welcome %s from %s %n",loginUser.get().getName(),loginUser.get().getCity());
 
 
                     }else{
@@ -113,14 +113,46 @@ public class App {
                 case 4:
                     Optional<List<Train>> trainList = trainServiceObj.getTrainList();
                     if(trainList.isPresent()){
-                        trainList.ifPresent(trains ->
-                                trains.forEach(train->{
-                                    System.out.println(train.getTrainInfo());
-                                })
+                        trainList.ifPresent(trains -> {
+//                                    System.out.println("List is size: "+trains.size());
+                                    trains.stream().distinct().forEach(train -> {
+                                        System.out.println(train.getTrainInfo());
+                                    });
+                                }
                                 );
                     }else{
                         System.out.println("Currently There is No Available, Please try After some time");
                     }
+                    break;
+                case 5:
+                    Optional<User> currentUserToBookTicket = userBookingServiceObj.getUser();
+                    if(currentUserToBookTicket.isPresent()){
+                    System.out.println(" ");
+                    Optional<List<Train>> trainListToSelect = trainServiceObj.getTrainList();
+                    if(trainListToSelect.isPresent()){
+                        trainListToSelect.ifPresent(trains ->
+                                trains.forEach(train->{
+                                    System.out.println(train.getTrainInfo());
+                                })
+                        );
+                        System.out.println("Select Train to book Seat from List");
+                        sc.nextLine();
+                        String inputTrainIdToBook = sc.nextLine();
+                        if(userBookingServiceObj.bookSeatUsingTrainId(inputTrainIdToBook)){
+                            System.out.println("Your Ticket is Successfully booked in train: "+inputTrainIdToBook);
+                        }
+                        else{
+                            System.out.println("Your Input Train id is: "+inputTrainIdToBook);
+                        }
+
+
+                    }else{
+                        System.out.println("Currently There is No Available, Please try After some time");
+                    }
+                    }else{
+                        System.out.println("Please Login First to book tickets");
+                    }
+                    break;
 
 
 

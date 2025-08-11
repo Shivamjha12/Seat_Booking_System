@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.irctc.booking.entities.Train;
 import com.irctc.booking.entities.User;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +36,47 @@ public class TrainService {
     public TrainService() throws IOException{
         loadTrains();
     }
+
+    private void saveTrainListToFile() throws IOException{
+        File trainFile = new File(TRAIN_PATH);
+        objectMapper.writeValue(trainFile,trainList);
+    }
+
+
     public Optional<List<Train>> getTrainList(){
         return Optional.ofNullable(trainList);
     }
+    public Optional<Train> getTrainObjectById(String trainIdPassed){
+
+        try{
+            loadTrains();
+        } catch (IOException e){
+            System.out.println("Get Error While Updating the train list");
+        }
+        Optional<Train> trainObjectbyId = trainList.stream().
+                filter(
+                        train -> train.getTrainId().equals(trainIdPassed))
+                .findFirst();
+        return  trainObjectbyId;
+    }
+    public void updateTrainInformation(Train newTrainObject){
+        for(int i=0;i<trainList.size();i++){
+            Train currentTrainInLoop = trainList.get(i);
+            if(currentTrainInLoop.getTrainId().equals(newTrainObject.getTrainId())){
+                trainList.set(i,newTrainObject);
+                try{
+                    saveTrainListToFile();
+                    System.out.println("Train Listed is Updated");
+                    break;
+                }catch (IOException e){
+                    System.out.println("Caught Error While Saving Updated Train List to train.json");
+                }
+                break;
+            }
+        }
+        System.out.println("Train not Found in List");
+
+    }
+
+
 }

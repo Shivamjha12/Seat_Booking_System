@@ -1,10 +1,11 @@
 package com.irctc.booking.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.irctc.booking.entities.Ticket;
+import com.irctc.booking.entities.Train;
 import com.irctc.booking.entities.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.irctc.booking.util.UserServiceUtil;
-
+import java.util.UUID;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,14 +13,35 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
+
+
+import java.time.LocalDate;
+
+
 public class UserBookingService {
 
     private User user;
     private List<User> userList;
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    TrainService trainServiceObject = new TrainService();
 
     private static final String USER_PATH="app/src/main/resources/users.json";
+
+
+    public void updateUser(User newUser) {
+        for (int i = 0; i < userList.size(); i++) {
+            User existingUser = userList.get(i);
+            if (existingUser.getUserId().equals(newUser.getUserId())) {
+                userList.set(i, newUser);
+                return; // Exit after replacing
+            }
+        }
+        System.out.println("User Not Found: "+newUser.getUserId());
+    }
+
+
+
 
     public List<User> loadUsers() throws  IOException{
 //        System.out.println("File Path-----------------------------------------------------------");
@@ -123,6 +145,44 @@ public class UserBookingService {
         return Boolean.FALSE;
     }
 
+    public Boolean bookSeatUsingTrainId(String trainId){
+        // 1. Find user object and get there, user
+//         2. Create Ticket Object
+//         3. Get Train object of train id
+//        put values of in ticket object
+        LocalDate currentDate = LocalDate.now();
+        List<Ticket> currentUserTickets = user.getTicketsBooked();
+        Ticket currentUsetTicketBookingObj = new Ticket();
+        Optional<Train> trainObjectToBookTicket = trainServiceObject.getTrainObjectById(trainId);
+        if(trainObjectToBookTicket.isPresent()){
+            if(trainObjectToBookTicket.get().canBookSeat()) {
+                currentUsetTicketBookingObj.setTicketId(UUID.randomUUID().toString());
+                currentUsetTicketBookingObj.setTrain(trainObjectToBookTicket.get());
+                currentUsetTicketBookingObj.setSource(trainObjectToBookTicket.get().getSource());
+                currentUsetTicketBookingObj.setDestination(trainObjectToBookTicket.get().getDestionation());
+                currentUsetTicketBookingObj.setDateOfTravel(currentDate.toString());
+                currentUsetTicketBookingObj.setUserId(user.getUserId());
+                trainObjectToBookTicket.get().bookSeat();
+                trainServiceObject.updateTrainInformation(trainObjectToBookTicket.get());
+                currentUserTickets.add(currentUsetTicketBookingObj);
+                user.setTicketsBooked(currentUserTickets);
+                updateUser(user);
+                try{
+                    saveUserListToFile();
+                }catch (IOException e){
+                    System.out.println("Something Get Wrong When saving user Data into DB");
+                }
+//                saveUserListToFile();
+            }else{
+                System.out.println("Can't Book seat in this train, seats are filled, sorry for inconvi");
+                return false;
+            }
 
+        }else{
+            System.out.println("Train not Found, Please Input Correct Train Id");
+            return false;
+        }
+        return true;
+    }
 
 }
